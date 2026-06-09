@@ -28,3 +28,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+*.wav
+*.mp3
+Data_Music/genres_original/*
