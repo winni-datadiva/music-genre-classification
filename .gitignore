@@ -33,3 +33,6 @@ $RECYCLE.BIN/
 *.mp3
 Data_Music/genres_original/*
 Data_Music/images_original/*
+
+#hide credentials
+.env
