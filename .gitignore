@@ -1,7 +1,3 @@
-Data/*.csv
-Data/cleaned.csv
-Data/clean.csv
-
 ### Windows ###
 
 # Windows thumbnail cache files
@@ -28,3 +24,12 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+### Mac OS
+.DS_STORE
+
+### Python
+.venv
+
+### Dataset
+Data_Music
