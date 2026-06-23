@@ -1,0 +1,16 @@
+﻿What to Research
+* What a waveform is and how audio is represented as a signal over time using amplitude and sample rate
+* What a spectrogram is and how it converts a waveform into a 2D visual representation of frequency over time
+* What MFCCs (Mel Frequency Cepstral Coefficients) are and why they are the standard feature extraction method for audio classification tasks
+* How Librosa works as a Python library for loading and analyzing audio files
+* What sample rate means and why consistency across your dataset matters for preprocessing
+* What class imbalance looks like in an audio dataset and how it can affect training
+What Your EDA Notebook Should Show
+* Class distribution bar chart showing how many audio clips exist per label, whether that is emotion, genre, or sign. Same principle as images: you need to know if the dataset is balanced.
+* Waveform plots showing the raw amplitude over time for one or more examples from each class. This helps the team see whether different classes have visually distinguishable waveform patterns.
+* Spectrogram plots for one or more examples per class. A spectrogram turns audio into something that looks like an image and is one of the most common inputs for audio CNNs. The team should be able to see differences between classes here.
+* MFCC plots for one or more examples per class. MFCCs compress the spectrogram into the most perceptually meaningful features. Visualizing these side by side across classes is a key part of understanding what the model will learn from.
+* Audio duration distribution showing how long the clips are across the dataset. Inconsistent lengths need to be handled during preprocessing and you need to know the range now.
+* Sample rate check confirming that all files share the same sample rate or flagging any that do not. A mismatch here will cause problems downstream.
+* Corrupted or missing file check documenting any audio files that fail to load, are silent, or have anomalous durations.
+* Written summary at the end of the notebook describing what the team observed, what differences they noticed across classes, and what preprocessing steps will likely be needed going into Sprint 2.
