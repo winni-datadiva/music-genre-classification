@@ -36,7 +36,7 @@ The key thing to observe is that the higher-sample-rate waveform has more sample
 #### -What class imbalance looks like in an audio dataset and how can it affect training? 
 Imbalanced data occurs when one class has far more samples than others, causing models to favour the majority class and perform poorly on the minority class. This often results in misleading accuracy when categorizing a genre to an audio. In audio classification, this means the model will often correctly recognize frequent sounds (e.g., standard speech) but completely fail to detect rarer acoustic events (e.g., specific bird calls or glass shattering), treating them as background noise.
 
-### Cleaning/Preproceesing 
+### Cleaning/Preprocessing 
 
 #### -How to use Librosa to load audio files, check sample rates, and extract MFCCs and spectrograms? 
 The primary function for loading an audio file is librosa.load(). This single function handles many complexities, such as decoding different audio formats (like .wav, .mp3) and converting the signal into a standardized numerical format.
@@ -58,6 +58,21 @@ Truncating is shortening/trimming audio.
 
 #### -How to normalize MFCC arrays and why it matters before feeding them into a model? 
 MFCC’s assist in feature extraction, reducing dimensionality while retaining crucial information for efficient data processing. 
+
+
+#### List of Sources
+
+https://medium.com/swlh/music-genre-classification-part-1-4c48a1a246ca
+https://geraldclarkaudio.medium.com/audio-programming-sample-rate-and-bit-depth-dd68ae58f717
+https://www.retekess.com/blog/understanding-sample-rates-in-digital-audio?
+https://vibrationresearch.com/blog/what-is-a-spectrogram/
+srsltid=AfmBOoo-4N5QO-kfZrKlGfruCvBTA1qcRXZ9cTjUBdf7SSufyXtQ3L1V
+https://docs.edgeimpulse.com/knowledge/concepts/data-engineering/audio-feature-extraction
+https://www.geeksforgeeks.org/nlp/mel-frequency-cepstral-coefficients-mfcc-for-speech-recognition/
+https://www.geeksforgeeks.org/data-analysis/preprocessing-the-audio-dataset/
+https://www.proacousticsusa.com/blog/post/what-is-a-pad-in-audio-passive-attenuation-devices/?srsltid=AfmBOorW0OABdeEzg20j9I77stKz4_0YnQAblpNeoUAUEDztt4wqMgG_
+https://librosa.org/doc/latest/tutorial.html
+https://www.youtube.com/watch?v=TlQcd_ogsIU
 
 
 
