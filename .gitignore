@@ -31,5 +31,9 @@ $RECYCLE.BIN/
 *.lnk
 
 #sqlalchemyenvironment
+<<<<<<< HEAD
 venv/.DS_store
 Data_Music/images_original/
+=======
+venv/
+>>>>>>> aacb4b3be4b46d3dcd8cd37a47b8f33cea77fa52
