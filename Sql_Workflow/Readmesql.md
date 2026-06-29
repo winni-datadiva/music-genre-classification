@@ -18,7 +18,7 @@ music_genre (1) ──→ (M) audio_track + vw_clean_tracks view
 
 
 
-## What Metadata We Store
+## What Metadata We Store in database
 
 **music_genre:**
 - `genre_id`, `genre_name`
