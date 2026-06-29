@@ -1,7 +1,3 @@
-Data_music/*.csv
-Data/cleaned.csv
-Data/clean.csv
-
 ### Windows ###
 
 # Windows thumbnail cache files
@@ -29,10 +25,13 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-*.wav
-*.mp3
-Data_Music/genres_original/*
-Data_Music/images_original/*
 
-#hide credentials
-.env
+### Mac OS
+.DS_STORE
+
+Data_Music/
+*.wav
+*.cvs 
+
+
+
