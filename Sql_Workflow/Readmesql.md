@@ -8,8 +8,7 @@ Built a metadata-only PostgreSQL database (`music_genre_db`) following
 
 music_genre (1) ──→ (M) audio_track + vw_clean_tracks view
 
-![ERD diagram](../music-genre-classification/image/Music_db_ERD.png)
-
+![ERD diagram](../image/Music_db_ERD.png)
 
 
 **2 tables + 1 view:**
