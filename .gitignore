@@ -36,3 +36,11 @@ Data_Music/
 .env
 
 
+### Mac OS
+.DS_STORE
+
+### Python
+.venv
+
+### Dataset
+Data_Music
