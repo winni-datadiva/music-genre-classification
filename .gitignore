@@ -30,8 +30,9 @@ $RECYCLE.BIN/
 .DS_STORE
 
 Data_Music/
-*.wav
-*.cvs 
+.wav
 
+#hide file 
+.env
 
 
