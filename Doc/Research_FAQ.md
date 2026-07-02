@@ -51,13 +51,24 @@ To check sample rate for any given file: librosa.get_samplerate
 librosa.featureFeature extraction and manipulation. This includes low-level feature extraction, such as chromagrams, Mel spectrogram, MFCC, and various other spectral and rhythmic features. Also provided are feature manipulation methods, such as delta features and memory embedding.
 
 #### -What padding and truncating means for audio and how to standardize clip length across a dataset? 
-A PAD (Passive Attenuation Device) is an attenuator circuit designed to reduce the strength of an incoming audio signal before it reaches the next stage of the audio chain.
-Instead of boosting or shaping your sound like an equalizer or preamp, a PAD simply lowers the volume of the signal, often by 20, 26, or 30 decibels. This helps prevent distortion, clipping, and overloading, especially when you are working with high-level audio sources.
+We pad audio with silence primarily to make all audio sequences in a dataset the same length, which is a fundamental requirement for most modern machine learning and signal processing techniques
+
 
 Truncating is shortening/trimming audio. 
 
 #### -How to normalize MFCC arrays and why it matters before feeding them into a model? 
 MFCC’s assist in feature extraction, reducing dimensionality while retaining crucial information for efficient data processing. 
+
+###  Model Architecture, Training, and Evaluation
+
+
+#### -How a CNN processes a spectrogram or MFCC array the same way it processes an image and why that works for audio classification?
+
+
+The convolutional neural network (CNN) is a deep learning method designed to automatically and adaptively learn spatial hierarchies. In the early layers/ an input layer, the network detects fundamental visual elements such as edges, corners, and color gradients- within audio, a mel spectrogram depicts 3 colors - time, Frequency, Amplitude. The color grading is crucial/ focal points to extract the details of the audio to classify the songs. Then, there is the convolutional layer, which finds local patterns in the input data. The final layers integrate these components to identify complete objects and complex key concepts.
+
+
+#### -How to handle single channel input if your spectrograms are not RGB since most pretrained models expect three channel input?
 
 
 #### List of Sources
@@ -70,7 +81,10 @@ srsltid=AfmBOoo-4N5QO-kfZrKlGfruCvBTA1qcRXZ9cTjUBdf7SSufyXtQ3L1V
 https://docs.edgeimpulse.com/knowledge/concepts/data-engineering/audio-feature-extraction
 https://www.geeksforgeeks.org/nlp/mel-frequency-cepstral-coefficients-mfcc-for-speech-recognition/
 https://www.geeksforgeeks.org/data-analysis/preprocessing-the-audio-dataset/
-https://www.proacousticsusa.com/blog/post/what-is-a-pad-in-audio-passive-attenuation-devices/?srsltid=AfmBOorW0OABdeEzg20j9I77stKz4_0YnQAblpNeoUAUEDztt4wqMgG_
+https://www.codebilby.com/blog/pad-audio-clip-with-silence
+https://librosa.org/doc/latest/tutorial.html
+https://www.youtube.com/watch?v=TlQcd_ogsIU
+https://anudeepareddy-s.medium.com/convolutional-neural-networks-cnns-for-audio-data-or-audio-feature-extraction-1c41f4aac35d
 https://librosa.org/doc/latest/tutorial.html
 https://www.youtube.com/watch?v=TlQcd_ogsIU
 
