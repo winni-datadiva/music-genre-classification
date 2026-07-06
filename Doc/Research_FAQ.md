@@ -62,13 +62,14 @@ MFCC’s assist in feature extraction, reducing dimensionality while retaining c
 ###  Model Architecture, Training, and Evaluation
 
 
-#### -How a CNN processes a spectrogram or MFCC array the same way it processes an image and why that works for audio classification?
+#### -How a CNN processes a spectrogram or MFCC array the same way it processes an image and why that works for audio classification? 
 
 
-The convolutional neural network (CNN) is a deep learning method designed to automatically and adaptively learn spatial hierarchies. In the early layers/ an input layer, the network detects fundamental visual elements such as edges, corners, and color gradients- within audio, a mel spectrogram depicts 3 colors - time, Frequency, Amplitude. The color grading is crucial/ focal points to extract the details of the audio to classify the songs. Then, there is the convolutional layer, which finds local patterns in the input data. The final layers integrate these components to identify complete objects and complex key concepts.
+The convolutional neural network (CNN) is a deep learning method designed to automatically and adaptively learn spatial hierarchies. Once the MFCC is arranged as a 2D matrix, the CNN can scan it with kernels in the same way it scans an image matrix. MFCCs compress the audio into a representation that keeps these important spectral characteristics while removing a lot of raw waveform detail, which makes the input easier for a CNN to learn from. 
 
 
 #### -How to handle single channel input if your spectrograms are not RGB since most pretrained models expect three channel input?
+
 
 
 #### List of Sources
