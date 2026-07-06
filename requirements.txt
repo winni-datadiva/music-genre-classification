@@ -20,12 +20,16 @@ debugpy==1.8.21
 decorator==5.3.1
 defusedxml==0.7.1
 executing==2.2.1
+expecttest>=0.3.0
 fastjsonschema==2.21.2
+filelock
 fonttools==4.63.0
 fqdn==1.5.1
+fsspect>=0.8.5
 h11==0.16.0
 httpcore==1.0.9
 httpx==0.28.1
+hypothesis
 idna==3.18
 ipykernel==7.2.0
 ipython==9.14.1
@@ -55,6 +59,8 @@ kiwisolver==1.5.0
 lark==1.3.1
 lazy-loader==0.5
 librosa==0.11.0
+lintrunner ; platform_system != "Windows"
+lintrunner ; platform_machine != "s390x"
 llvmlite==0.47.0
 MarkupSafe==3.0.3
 matplotlib==3.10.9
@@ -66,10 +72,12 @@ nbclient==0.11.0
 nbconvert==7.17.1
 nbformat==5.10.4
 nest-asyncio==1.6.0
+networkx>=2.5.1
 notebook==7.5.7
 notebook_shim==0.2.4
 numba==0.65.1
 numpy==2.4.6
+optree>=0.13.0
 packaging==26.2
 pandas==3.0.3
 pandocfilters==1.5.1
@@ -89,6 +97,7 @@ Pygments==2.20.0
 pyparsing==3.3.2
 python-dateutil==2.9.0.post0
 python-json-logger==4.1.0
+pytorch==2.10.0
 PyYAML==6.0.3
 pyzmq==27.1.0
 referencing==0.37.0
@@ -103,6 +112,7 @@ seaborn==0.13.2
 Send2Trash==2.1.0
 setuptools==82.0.1
 six==1.17.0
+spin
 soundfile==0.14.0
 soupsieve==2.8.4
 soxr==1.1.0
@@ -110,9 +120,14 @@ stack-data==0.6.3
 standard-aifc==3.13.0
 standard-chunk==3.13.0
 standard-sunau==3.13.0
+symp>=1.13.3
 terminado==0.18.1
 threadpoolctl==3.6.0
 tinycss2==1.5.1
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.1.1+cpu
+torchvision==0.16.1+cpu
+torchaudio==2.1.1+cpu
 tornado==6.5.7
 traitlets==5.15.1
 typing_extensions==4.15.0
@@ -123,4 +138,5 @@ wcwidth==0.8.1
 webcolors==25.10.0
 webencodings==0.5.1
 websocket-client==1.9.0
+wheel
 widgetsnbextension==4.0.15

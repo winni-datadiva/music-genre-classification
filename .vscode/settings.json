@@ -1,4 +1,108 @@
 {
+  "[javascript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true
+  },
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "explicit",
+      "source.organizeImports.ruff": "explicit"
+    },
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": true
     "python-envs.defaultEnvManager": "ms-python.python:conda",
     "python-envs.defaultPackageManager": "ms-python.python:conda"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true
+  },
+  "[yml]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml",
+    "editor.formatOnSave": true
+  },
+  "files.trimTrailingWhitespace": true,
+  "files.trimFinalNewlines": true,
+  "files.insertFinalNewline": true,
+  "search.exclude": {
+    "lib/build/**": true
+  },
+  "makefile.configureOnOpen": false,
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "eslint.lintTask.enable": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always",
+    "source.fixAll.oxc": "always"
+  },
+  "editor.formatOnSaveMode": "file",
+  "oxc.fmt.configPath": "frontend/.oxfmtrc.json",
+  "vitest.maximumConfigs": 5,
+  "mypy-type-checker.importStrategy": "fromEnvironment",
+  "mypy-type-checker.preferDaemon": false,
+  "mypy-type-checker.args": [],
+  "ruff.nativeServer": true,
+  "ruff.organizeImports": true,
+  "ruff.fixAll": true,
+  "python.analysis.exclude": [
+    "lib/build",
+    "**/node_modules",
+    "**/__pycache__",],
+  "python.analysis.include": [
+    "lib/**/*",
+    "scripts/**/*",
+    "e2e_playwright/**/*"
+  ],
+  "python.analysis.extraPaths": ["./lib"],
+  "python.analysis.typeCheckingMode": "off",
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "python.testing.pytestEnabled": true,
+  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+  "cursorpyright.analysis.exclude": ["lib/build"],
+  "cursorpyright.analysis.include": [
+    "lib/**/*",
+    "scripts/**/*",
+    "e2e_playwright/**/*"
+  ],
+  "cursorpyright.analysis.extraPaths": ["./lib"],
+  "cursorpyright.analysis.typeCheckingMode": "off",
+  "cursorpyright.analysis.useTypingExtensions": true,
+  "cursorpyright.shouldImportPylanceSettings": "always",
+  "cursorpyright.analysis.logLevel": "Information",
+  "terminal.integrated.profiles.linux": {
+    "frontend-dev": {
+      "path": "bash",
+      "args": ["-c", "make frontend-dev"]
+    }
+  },
+  "js/ts.tsdk.promptToUseWorkspaceVersion": "frontend/node_modules/typescript/lib",
+  "git.branchProtection": ["develop"]
 }
