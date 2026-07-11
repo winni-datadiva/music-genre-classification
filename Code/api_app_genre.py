@@ -16,6 +16,7 @@ import librosa
 import numpy as np
 import torch
 from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
 from model import GenreCNN
@@ -33,6 +34,10 @@ app = FastAPI(title="Rhythmx Genre Classifier API")
 _model = None
 _idx_to_genre = None
 
+
+@app.get("/")
+def root():
+    return RedirectResponse(url="/docs")
 
 class GenrePrediction(BaseModel):
     genre: str
