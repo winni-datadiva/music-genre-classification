@@ -58,6 +58,11 @@ librosa==0.11.0
 llvmlite==0.47.0
 MarkupSafe==3.0.3
 matplotlib==3.10.9
+nnAudio==0.3.3
+accelerate>=0.30
+safetensors>=0.4.0
+sentencepiece>=0.2.0
+transformers>=4.45,<5
 matplotlib-inline==0.2.2
 mistune==3.2.1
 msgpack==1.1.2
