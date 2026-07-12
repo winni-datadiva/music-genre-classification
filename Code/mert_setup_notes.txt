@@ -1,0 +1,12 @@
+MERT embedding extraction setup notes
+==================================
+
+Environment:
+- Python 3.11 in the DS_class conda env worked for loading m-a-p/MERT-v1-330M.
+- Install:
+  pip install 'transformers>=4.45,<5' 'accelerate>=0.30' 'sentencepiece>=0.2.0' 'safetensors>=0.4.0' 'nnAudio==0.3.3' 'librosa>=0.7.0,<0.9' 'soundfile>=0.12' 'audioread>=3.0' 'pandas>=2.0' 'scikit-learn>=1.3' 'tqdm>=4.27' 'psycopg2-binary>=2.9'
+
+Notes:
+- The notebook uses MODEL_NAME = 'm-a-p/MERT-v1-330M' by default.
+- If CPU-only and slow, switch to 'm-a-p/MERT-v1-95M'.
+- The model download is large (~1.3 GB for the 330M checkpoint).
