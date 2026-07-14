@@ -1,8 +1,48 @@
 import streamlit as st
+from streamlit.runtime.scriptrunner import add_script_run_ctx, get_script_run_ctx
+import time
+from threading import Thread
 import torch
 import torch.nn as nn
 import librosa
 import numpy as np
+
+# ── Thread / Subprocess for ScriptRunContext ───────────────────────────────
+# Get results from a thread or subprocess in memory to mitigate Streamlit cache issues.
+# Using Streamlit commands within the parent script/page to handle commands.
+class WorkerThread(Thread):
+    def __init__(self, delay, target):
+        super().__init__()
+        self.delay = delay
+        self.target = target
+
+    def run(self):
+        # runs in custom thread but can also call Streamlit APIs
+        start_time = time.time()
+        time.sleep(self.delay)
+        end_time = time.time()
+        self.target.write(f"start: {start_time}, end: {end_time}, elapsed: {end_time - start_time:.2f} seconds")
+
+
+delays = [5, 4, 3, 2, 1]
+result_containers = []
+for i, delay in enumerate(delays):
+    st.header(f"Thread {i}")
+    result_containers.append(st.container())
+
+threads = [
+    WorkerThread(delay, container)
+    for delay, container in zip(delays, result_containers)
+]
+for thread in threads:
+    add_script_run_ctx(thread, get_script_run_ctx())
+    thread.start()
+
+for thread in threads:
+    thread.join()
+
+st.button("Rerun")
+
 
 # ── Config ────────────────────────────────────────────────────────────────
 model_path = "genre_mlp_model.pt"
@@ -136,3 +176,6 @@ if uploaded_audio is not None:
             for i in range(len(LABEL_MAP))
         }
         st.bar_chart(probs_by_genre)
+
+
+streamlit run Sql_Workflow/streamlit_app_genre.py
