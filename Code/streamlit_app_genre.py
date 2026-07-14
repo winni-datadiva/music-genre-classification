@@ -18,16 +18,25 @@ import torch
 
 from model import GenreCNN
 
+# Load normalization stats computed during CNN Training
+STATS_PATH = "train_norm_stats.json"  
+
+with open(STATS_PATH) as f:
+    stats = json.load(f)
+
+TRAIN_MEAN = stats["train_mean"]
+TRAIN_STD = stats["train_std"]
+print(f"Loaded normalization stats -> mean: {TRAIN_MEAN:.4f}, std: {TRAIN_STD:.4f}")
+
 # --- Constants (must match preprocessing notebook) ---
 N_MFCC = 13
 SAMPLE_RATE = 22050
 TARGET_FRAMES = 130
 CHECKPOINT_PATH = Path("best_genre_cnn.pt")
-# Precomputed on the train split during preprocessing — pull the actual
-# values printed by Cell 21 of preprocess_clean_final.ipynb and hardcode
-# them here so the app doesn't depend on recomputing stats at runtime.
-TRAIN_MEAN = -0.4816   
-TRAIN_STD = 65.9672   
+
+# Precomputed on the train split during preprocessing
+PP_TRAIN_MEAN = -0.4816   
+PP_TRAIN_STD = 65.9672   
 
 
 @st.cache_resource
