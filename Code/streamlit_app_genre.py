@@ -23,11 +23,10 @@ N_MFCC = 13
 SAMPLE_RATE = 22050
 TARGET_FRAMES = 130
 CHECKPOINT_PATH = Path("best_genre_cnn.pt")
-# Precomputed on the train split during preprocessing — pull the actual
-# values printed by Cell 21 of preprocess_clean_final.ipynb and hardcode
-# them here so the app doesn't depend on recomputing stats at runtime.
-TRAIN_MEAN = -0.4816   
-TRAIN_STD = 65.9672   
+
+# Updated after re-training on the full chunked dataset (9,695 samples, song-safe split)
+TRAIN_MEAN = -0.3944
+TRAIN_STD = 63.4170
 
 
 @st.cache_resource
@@ -82,7 +81,6 @@ def main():
     if uploaded_file is not None:
         y, sr = librosa.load(uploaded_file, sr=SAMPLE_RATE, mono=True)
 
-        # Use the first 3 seconds to match training clip length; pad if shorter
         clip_len = 3 * sr
         if len(y) < clip_len:
             y = np.pad(y, (0, clip_len - len(y)))
@@ -95,11 +93,13 @@ def main():
             ranked = predict(model, idx_to_genre, y, sr)
 
         top_genre, top_prob = ranked[0]
-        st.subheader(f"Predicted genre: **{top_genre}** ({top_prob:.1%} confidence)")
 
-        st.write("Full breakdown:")
-        for genre, prob in ranked:
-            st.progress(prob, text=f"{genre}: {prob:.1%}")
+        st.success(f"Prediction: {top_genre}")
+        st.write(f"Confidence: {top_prob:.2%}")
+
+        probs_by_genre = {genre: prob for genre, prob in ranked}
+        st.subheader("Genre probabilities")
+        st.bar_chart(probs_by_genre)
 
 
 if __name__ == "__main__":

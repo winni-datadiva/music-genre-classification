@@ -26,8 +26,8 @@ SAMPLE_RATE = 22050
 TARGET_FRAMES = 130
 CHECKPOINT_PATH = Path("best_genre_cnn.pt")
 
-TRAIN_MEAN = -0.4816
-TRAIN_STD = 65.9672
+TRAIN_MEAN = -0.3944
+TRAIN_STD = 63.4170
 
 app = FastAPI(title="Rhythmx Genre Classifier API")
 

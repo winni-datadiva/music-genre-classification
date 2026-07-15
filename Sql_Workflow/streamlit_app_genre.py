@@ -1,138 +1,108 @@
-import streamlit as st
-import torch
-import torch.nn as nn
+"""
+Rhythmx Music Genre Classification — Streamlit Demo (CNN version)
+
+Run with:
+    streamlit run streamlit_app_genre.py
+
+Expects `best_genre_cnn.pt` (produced by CNN_Training.ipynb) and `model.py`
+in the same directory.
+"""
+
+import json
+from pathlib import Path
+
 import librosa
 import numpy as np
+import streamlit as st
+import torch
 
-# ── Config ────────────────────────────────────────────────────────────────
-model_path = "genre_mlp_model.pt"
-DEVICE = torch.device('cpu')
+from model import GenreCNN
 
-N_MFCC = 13  # must match clean_preprocess_dataset.ipynb
+# --- Constants (must match preprocessing notebook) ---
+N_MFCC = 13
+SAMPLE_RATE = 22050
+TARGET_FRAMES = 130
+CHECKPOINT_PATH = Path("best_genre_cnn.pt")
 
-
-# ── Model definition ─────────────────────────────────────────────────────
-# Must match the architecture used in MLP_Training.ipynb exactly, since we
-# rebuild it from scratch here and then load the saved weights into it.
-class GenreMLP(nn.Module):
-    def __init__(self, input_dim, hidden_dims, num_classes, dropout=0.3):
-        super().__init__()
-        layers = []
-        prev_dim = input_dim
-        for h in hidden_dims:
-            layers += [nn.Linear(prev_dim, h), nn.ReLU(), nn.Dropout(dropout)]
-            prev_dim = h
-        layers.append(nn.Linear(prev_dim, num_classes))
-        self.net = nn.Sequential(*layers)
-
-    def forward(self, x):
-        return self.net(x)
+# Updated after re-training on the full chunked dataset (9,695 samples, song-safe split)
+TRAIN_MEAN = -0.3944
+TRAIN_STD = 63.4170
 
 
 @st.cache_resource
 def load_model():
-    checkpoint = torch.load(model_path, map_location=DEVICE)
-
-    model = GenreMLP(
-        input_dim=checkpoint['input_dim'],
-        hidden_dims=checkpoint['hidden_dims'],
-        num_classes=checkpoint['num_classes'],
-    )
-    model.load_state_dict(checkpoint['model_state_dict'])
+    checkpoint = torch.load(CHECKPOINT_PATH, map_location="cpu")
+    model = GenreCNN(num_classes=checkpoint["num_classes"])
+    model.load_state_dict(checkpoint["model_state_dict"])
     model.eval()
-
-    return model, checkpoint
-
-
-model, checkpoint = load_model()
-
-FEATURE_COLS = checkpoint['feature_cols']
-FEATURE_MEAN = np.array(checkpoint['feature_mean'], dtype=np.float32)
-FEATURE_STD = np.array(checkpoint['feature_std'], dtype=np.float32)
-LABEL_MAP = checkpoint['label_map']
-INV_LABEL_MAP = {v: k for k, v in LABEL_MAP.items()}
-
-SAMPLE_RATE = checkpoint['sample_rate']
-DURATION_SEC = checkpoint['duration_sec']
-TARGET_SAMPLES = SAMPLE_RATE * DURATION_SEC
+    idx_to_genre = {v: k for k, v in checkpoint["genre_to_idx"].items()}
+    return model, idx_to_genre
 
 
-def extract_features(y, sr):
-    """Extract the same 18 mean-pooled features used in clean_preprocess_dataset.ipynb.
-
-    Column order must match FEATURE_COLS exactly — do not reorder.
-    """
-    tempo, _ = librosa.beat.beat_track(y=y, sr=sr)
-    tempo_val = float(np.atleast_1d(tempo)[0])
-
-    chroma_mean = float(np.mean(librosa.feature.chroma_stft(y=y, sr=sr)))
-
-    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=N_MFCC)
-    mfcc_means = np.mean(mfcc, axis=1)
-
-    spectral_centroid = float(np.mean(librosa.feature.spectral_centroid(y=y, sr=sr)))
-    spectral_rolloff = float(np.mean(librosa.feature.spectral_rolloff(y=y, sr=sr)))
-    zcr = float(np.mean(librosa.feature.zero_crossing_rate(y)))
-
-    features = {
-        'tempo': tempo_val,
-        'chroma_mean': chroma_mean,
-        **{f'mfcc{i + 1}_mean': mfcc_means[i] for i in range(N_MFCC)},
-        'spectral_centroid': spectral_centroid,
-        'spectral_rolloff': spectral_rolloff,
-        'zero_crossing_rate': zcr,
-    }
-
-    # Enforce the exact column order the model was trained on
-    return np.array([features[col] for col in FEATURE_COLS], dtype=np.float32)
+def extract_mfcc_array(y, sr, n_mfcc=N_MFCC, target_frames=TARGET_FRAMES):
+    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=n_mfcc)
+    if mfcc.shape[1] < target_frames:
+        mfcc = np.pad(mfcc, ((0, 0), (0, target_frames - mfcc.shape[1])), mode="constant")
+    else:
+        mfcc = mfcc[:, :target_frames]
+    return mfcc.astype(np.float32)
 
 
-def preprocess_audio(audio_file):
-    """Load an uploaded clip and convert it into a model-ready, normalized tensor."""
-    y, sr = librosa.load(audio_file, sr=SAMPLE_RATE, mono=True)
+def predict(model, idx_to_genre, y, sr):
+    mfcc = extract_mfcc_array(y, sr)
+    mfcc = (mfcc - TRAIN_MEAN) / (TRAIN_STD + 1e-8)
+    x = torch.tensor(mfcc, dtype=torch.float32).unsqueeze(0).unsqueeze(0)  # (1, 1, 13, 130)
 
-    # Pad or truncate to the fixed clip length the model was trained on
-    if len(y) > TARGET_SAMPLES:
-        y = y[:TARGET_SAMPLES]
-    elif len(y) < TARGET_SAMPLES:
-        y = np.pad(y, (0, TARGET_SAMPLES - len(y)), mode='constant')
+    with torch.no_grad():
+        logits = model(x)
+        probs = torch.softmax(logits, dim=1).squeeze(0).numpy()
 
-    raw_features = extract_features(y, sr)
-
-    # Normalize using the TRAINING-set statistics, not this clip's own stats
-    normalized = (raw_features - FEATURE_MEAN) / FEATURE_STD
-
-    # Shape: (num_features,) -> (1, num_features) for batch dim
-    feature_tensor = torch.tensor(normalized, dtype=torch.float32).unsqueeze(0)
-    return feature_tensor
+    ranked = sorted(
+        [(idx_to_genre[i], float(p)) for i, p in enumerate(probs)],
+        key=lambda t: t[1],
+        reverse=True,
+    )
+    return ranked
 
 
-# ── STREAMLIT APP ───────────────────────────────────────────────────────
-st.title('GTZAN Music Genre Classifier')
-st.caption('Upload a music clip and the model will predict its genre.')
+def main():
+    st.set_page_config(page_title="Rhythmx Genre Classifier", page_icon="🎵")
+    st.title("🎵 Rhythmx — Music Genre Classifier")
+    st.caption("CNN trained on 3-second MFCC clips (GTZAN)")
 
-uploaded_audio = st.file_uploader("Upload an audio clip...", type=["wav", "mp3"])
+    if not CHECKPOINT_PATH.exists():
+        st.error(f"Checkpoint not found at `{CHECKPOINT_PATH}`. Run CNN_Training.ipynb first.")
+        return
 
-if uploaded_audio is not None:
-    st.audio(uploaded_audio)
+    model, idx_to_genre = load_model()
 
-    if st.button('Classify'):
-        with st.spinner('Extracting features and running the model...'):
-            feature_tensor = preprocess_audio(uploaded_audio)
+    uploaded_file = st.file_uploader("Upload a .wav clip", type=["wav"])
 
-            with torch.no_grad():
-                logits = model(feature_tensor)
-                probabilities = torch.softmax(logits, dim=1)
-                confidence, predicted_idx = torch.max(probabilities, dim=1)
+    if uploaded_file is not None:
+        y, sr = librosa.load(uploaded_file, sr=SAMPLE_RATE, mono=True)
 
-        prediction = INV_LABEL_MAP[predicted_idx.item()]
+        clip_len = 3 * sr
+        if len(y) < clip_len:
+            y = np.pad(y, (0, clip_len - len(y)))
+        else:
+            y = y[:clip_len]
 
-        st.success(f'Prediction: **{prediction}**')
-        st.write(f'Confidence: {confidence.item() * 100:.2f}%')
+        st.audio(uploaded_file)
 
-        # Show full probability breakdown across all genres
-        probs_by_genre = {
-            INV_LABEL_MAP[i]: probabilities[0, i].item()
-            for i in range(len(LABEL_MAP))
-        }
+        with st.spinner("Classifying..."):
+            ranked = predict(model, idx_to_genre, y, sr)
+
+        top_genre, top_prob = ranked[0]
+
+        # Green success banner + confidence text
+        st.success(f"Prediction: {top_genre}")
+        st.write(f"Confidence: {top_prob:.2%}")
+
+        # Bar chart of probabilities across all genres
+        probs_by_genre = {genre: prob for genre, prob in ranked}
+        st.subheader("Genre probabilities")
         st.bar_chart(probs_by_genre)
+
+
+if __name__ == "__main__":
+    main()
