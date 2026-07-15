@@ -45,7 +45,7 @@ CHECKPOINT_PATH = Path("best_genre_cnn.pt")
 
 @st.cache_resource
 def load_model():
-    checkpoint = torch.load(CHECKPOINT_PATH, map_location="cpu", weight_only=False)
+    checkpoint = torch.load(CHECKPOINT_PATH, map_location="cpu")
     model = GenreCNN(num_classes=checkpoint["num_classes"])
     model.load_state_dict(checkpoint["model_state_dict"])
     model.eval()
