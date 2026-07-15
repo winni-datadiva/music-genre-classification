@@ -19,7 +19,11 @@ import torch
 from model import GenreCNN
 
 # Load normalization stats computed during CNN Training
-STATS_PATH = "train_norm_stats.json"  
+STATS_PATH = Path("train_norm_stats.json")
+
+if not STATS_PATH.exists():
+    st.error(f"Normalization stats not found at `{STATS_PATH}`. Run CNN_Training.ipynb first.")
+    st.stop()
 
 with open(STATS_PATH) as f:
     stats = json.load(f)
@@ -35,13 +39,13 @@ TARGET_FRAMES = 130
 CHECKPOINT_PATH = Path("best_genre_cnn.pt")
 
 # Precomputed on the train split during preprocessing
-PP_TRAIN_MEAN = -0.4816   
-PP_TRAIN_STD = 65.9672   
+# PP_TRAIN_MEAN = -0.4816   
+# PP_TRAIN_STD = 65.9672   
 
 
 @st.cache_resource
 def load_model():
-    checkpoint = torch.load(CHECKPOINT_PATH, map_location="cpu")
+    checkpoint = torch.load(CHECKPOINT_PATH, map_location="cpu", weight_only=False)
     model = GenreCNN(num_classes=checkpoint["num_classes"])
     model.load_state_dict(checkpoint["model_state_dict"])
     model.eval()
@@ -89,27 +93,34 @@ def main():
     uploaded_file = st.file_uploader("Upload a .wav clip", type=["wav"])
 
     if uploaded_file is not None:
-        y, sr = librosa.load(uploaded_file, sr=SAMPLE_RATE, mono=True)
-
+        try:
+            # res_type='soxr_hq' pinned to match extraction in CNN_Training.ipynb —
+            # keeps inference-time MFCCs consistent with what the model was trained on.
+            y, sr = librosa.load(uploaded_file, sr=SAMPLE_RATE, mono=True, res_type="soxr_hq")
+        except Exception as e:
+            st.error(f"Could not decode audio: {e}")
+            return
+ 
         # Use the first 3 seconds to match training clip length; pad if shorter
         clip_len = 3 * sr
         if len(y) < clip_len:
             y = np.pad(y, (0, clip_len - len(y)))
         else:
             y = y[:clip_len]
-
+ 
         st.audio(uploaded_file)
-
+ 
         with st.spinner("Classifying..."):
             ranked = predict(model, idx_to_genre, y, sr)
-
+ 
         top_genre, top_prob = ranked[0]
         st.subheader(f"Predicted genre: **{top_genre}** ({top_prob:.1%} confidence)")
-
+ 
         st.write("Full breakdown:")
         for genre, prob in ranked:
             st.progress(prob, text=f"{genre}: {prob:.1%}")
-
-
+ 
+ 
 if __name__ == "__main__":
     main()
+ 
